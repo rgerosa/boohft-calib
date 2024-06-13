@@ -5,14 +5,14 @@
 ###############
 
 ## Routine name
-routine_name: PNetXbbVsQCD_ak8_inclWP_2023postBPIX_NanoV12
+routine_name: PNetXbbVsQCD_ak8_inclWP_2022preEE_NanoV12
 
 ## Type of the tagger, can be 'bb', 'cc', or 'qq'. This is used in the choice of proxy - e.g. for 'bb' one use
 ## g->bb as the proxy of bb resonance signal and extract the SF from the flavour B component.
 type: bb
 
 ## Year of the UL condition. Can be 2016APV, 2016, 2017, 2018, 2022, 2022preEE, 2022postEE, 2023preBPIX, 2023postBPIX
-year: 2023postBPIX
+year: 2022preEE
 
 ## Prefix of the main samples produced from NanoHRT. $YEAR is a placeholder of year in the format above
 ## This need not be changed except for expert use.

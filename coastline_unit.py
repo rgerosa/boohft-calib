@@ -87,7 +87,6 @@ class CoastlineCoffeaProcessor(processor.ProcessorABC):
         for i in '12': # jet index
             custom_sel = ak.numexpr.evaluate(self.global_cfg.custom_selection.replace('fj_x', f'fj_{i}'), events) if self.global_cfg.custom_selection is not None else ak.ones_like(presel, dtype=bool)
             events_fj = events[(presel) & (events[f'fj_{i}_is_qualified']) & (custom_sel)]
-
             # calculate weights and flavour variables
             if is_mc:
                 # calculate the MC-to-data weigts only for MC
@@ -117,6 +116,8 @@ class CoastlineCoffeaProcessor(processor.ProcessorABC):
             else:
                 sfbdt = events_fj[f'fj_{i}_sfBDT']
             if is_mc:
+                #tmin, tmax = self.global_cfg.tagger.span
+                #targger_range_sel = "("+self.tagger_expr.replace('fj_x', f'fj_{i}')+">="+str(tmin)+") & ("+self.tagger_expr.replace('fj_x', f'fj_{i}')+"<="+str(tmax)+")"
                 tagger_flv_sel = ak.numexpr.evaluate(self.tagger_expr.replace('fj_x', f'fj_{i}'), events_fj[flv_sel])
                 xtagger_flv_sel = self.xtagger_map(tagger_flv_sel)
                 out[f'h2d_grid'].fill(

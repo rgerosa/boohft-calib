@@ -52,9 +52,16 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
         self.tagger_expr = parse_tagger_expr(global_cfg.tagger_name_replace_map, global_cfg.tagger.expr)
         self.lookup_mc_weight = partial(lookup_pt_based_weight, self.weight_map, self.pt_reweight_edges, jet_var_maxlimit=2500.)
         self.lookup_sfbdt_weight = partial(lookup_pt_based_weight, self.sfbdt_weight_map, self.pt_reweight_edges, jet_var_maxlimit=1.)
-        self.untypes = ['nominal', 'fracBCLUp', 'fracBCLDown', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', 'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', 'sfBDTRwgtUp']
+        #self.untypes = ['nominal', 'fracBCLUp', 'fracBCLDown', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', 'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', 'sfBDTRwgtUp']
+        self.untypes = ['nominal', 'fracBCLUp', 'fracBCLDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', 'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', 'sfBDTRwgtUp']
+        #self.write_untypes = [
+        #    'nominal', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', \
+        #    'fracBBUp', 'fracBBDown', 'fracCCUp', 'fracCCDown', 'fracLightUp', 'fracLightDown', \
+        #    'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', \
+        #    'sfBDTRwgtUp', 'sfBDTRwgtDown', 'fitVarRwgtUp', 'fitVarRwgtDown'
+        #]
         self.write_untypes = [
-            'nominal', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', \
+            'nominal', 'jesUp', 'jesDown', 'jerUp', 'jerDown', \
             'fracBBUp', 'fracBBDown', 'fracCCUp', 'fracCCDown', 'fracLightUp', 'fracLightDown', \
             'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', \
             'sfBDTRwgtUp', 'sfBDTRwgtDown', 'fitVarRwgtUp', 'fitVarRwgtDown'
@@ -162,8 +169,8 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
                     f'((fj_{i}_nbhadrons==0) & (fj_{i}_nchadrons>=1)) * (0.8*(fj_{i}_nchadrons>1) + 0.8*(fj_{i}_nchadrons<=1)) + ' + \
                     f'((fj_{i}_nbhadrons==0) & (fj_{i}_nchadrons==0)) * (0.8)', events_fj
                 )
-                weight['puUp'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeightUp*l1PreFiringWeight*{lumi}', events_fj) * mc_weight
-                weight['puDown'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeightDown*l1PreFiringWeight*{lumi}', events_fj) * mc_weight
+                #weight['puUp'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeightUp*l1PreFiringWeight*{lumi}', events_fj) * mc_weight
+                #weight['puDown'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeightDown*l1PreFiringWeight*{lumi}', events_fj) * mc_weight
                 weight['l1PreFiringUp'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeight*l1PreFiringWeightUp*{lumi}', events_fj) * mc_weight
                 weight['l1PreFiringDown'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeight*l1PreFiringWeightDown*{lumi}', events_fj) * mc_weight
                 if len(events_fj) and hasattr(events_fj, 'PSWeight') and len(events_fj.PSWeight[0]) == 4:

@@ -20,15 +20,16 @@ sample_prefix: /media/Disk1/rgerosa/CalibrationHbb/ntuples_300524_ak8_qcd_$YEAR
 
 ## Jet pT edges to define multiple exclusive ranges for fit
 ## e.g. for edges [e1, e2, e3], will define three pT range [e1, e2), [e2, e3), [e3, +inf)
-pt_edges: [250, 400, 550]
+pt_edges: [250, 350, 450, 600]
 
 ## [Optional]: Step 4 will by default run the impact for the central fit point, which is time-consuming.
 ## For this example we temporarily disable the feature, which does not affect the scale factors. 
-run_impact_for_central_fit: false  # default: true
+run_impact_for_central_fit: true  # default: true
 
 ## custom config!!
 custom_sfbdt_path: /eos/user/c/coli/cms-repo/boohft-calib/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model
 custom_sfbdt_kfold: 5
+custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200)
 
 #######################
 ## Tagger defination ##
@@ -44,7 +45,7 @@ tagger:
   ## to these WPs. Format: {name: [low, high], ...}
   ## Note: below values are taken only as an example. Please optimize and choose the WPs dedicated to
   ## the user's anlaysis
-  wps: {HP: [0.95, 1.00], MP: [0.90, 1.00], LP: [0.80, 1.00]} # official UL WPs
+  wps: {HP: [0.95, 1.00], MP: [0.90, 0.95], LP: [0.80, 0.90]} # official UL WPs
 
   ## Label name of the tagger
   label: ParticleNet-MD bbVsQCD
@@ -64,7 +65,7 @@ main_analysis_tree:
   ## correct g->bb/cc/qq jet phase-space (for bb/cc/qq-type calibration respectively) that serves as a
   ## reasonable proxy to the resonance signal jets under this user-specified selection
   ## *NOTE*: should always use parentheses between & and |
-  selection: (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8)
+  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200)
   
   ## Name or expression of the same tagger variable defined in this tree
   tagger: fj_1_ParticleNetMD_XbbVsQCD

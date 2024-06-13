@@ -5,9 +5,10 @@ WORKDIR=$PWD
 # trick for SWAN: unset previous python env
 unset PYTHONPATH
 unset PYTHONHOME
+
+#cmssw-el7 -B /eos -B /media/
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc7_amd64_gcc700
-export RELEASE=CMSSW_10_2_27
+export RELEASE=CMSSW_11_3_4
 
 if [ -r $RELEASE/src ] ; then
     echo release $RELEASE already exists
@@ -20,11 +21,11 @@ else
     git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
     cp $WORKDIR/cmssw/data/TagAndProbeExtendedV2.py HiggsAnalysis/CombinedLimit/python/  # copy the model we will use in fit
     cd HiggsAnalysis/CombinedLimit
-    git checkout v8.2.0 # recommended tag
+    git checkout v9.2.1 # recommended tag
     cd ../..
 
     ## Install CombineHarvester
-    git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester -b 102x
+    git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester 
     cp $WORKDIR/cmssw/data/plot1DScanWithOutput.py CombineHarvester/CombineTools/scripts/
     scram b -j8
 

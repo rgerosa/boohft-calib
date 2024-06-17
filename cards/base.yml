@@ -51,7 +51,7 @@ show_sfbdt_variation_all_flavour: false  # if true, show all flavour plots for s
 ## Predefined values ##
 #######################
 
-lumi_dict: {"2016APV": 19.52, "2016": 16.81, "2017": 41.48, "2018": 59.83, "2022preEE": 7.87, "2022postEE": 26.27, "2023preBPIX": 17.96, "2023postBPIX": 9.50}
+lumi_dict: {"2016APV": 19.52, "2016": 16.81, "2017": 41.48, "2018": 59.83, "2022preEE": 7.87, "2022postEE": 26.67, "2023preBPIX": 17.96, "2023postBPIX": 9.50}
 
 fileset_template:
   qcd-mg:  mc/qcd-mg_tree.root

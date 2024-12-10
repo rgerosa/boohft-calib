@@ -23,9 +23,9 @@ else
     cd HiggsAnalysis/CombinedLimit
     git checkout v9.2.1 # recommended tag
     cd ../..
-
+    
     ## Install CombineHarvester
-    git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester 
+    git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
     cp $WORKDIR/cmssw/data/plot1DScanWithOutput.py CombineHarvester/CombineTools/scripts/
     scram b -j8
 

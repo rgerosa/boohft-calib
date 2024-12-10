@@ -23,6 +23,7 @@ parser.add_argument('--bound', default=None, help='Set the bound of three SFs, e
 parser.add_argument('--run-impact', action='store_true', help='Run impact plots.')
 parser.add_argument('--run-unce-breakdown', action='store_true', help='Run uncertainty breakdown')
 parser.add_argument('--run-full-unce-breakdown', action='store_true', help='Run full uncertainty breakdown')
+parser.add_argument('--run-freeze-other-sf', action='store_true', help='Run with frozen other SFs')
 args = parser.parse_args()
 
 if args.type == 'bb':
@@ -139,22 +140,29 @@ def runcmd(cmd, shell=True):
     return (out, p.returncode)
 
 ext_po = '' if args.bound is None else '--PO bound='+args.bound
+ext_fit_options = ''
 if args.mode == 'main':
-    ext_fit_options = ''
+    if args.run_freeze_other_sf:
+        ext_fit_options = '--freezeParameters SF_'+flv_poi2+",SF_"+flv_poi3        
 elif args.mode == 'sfbdt_rwgt':
     ext_fit_options = '--setParameters sfBDTRwgt=1 --freezeParameters sfBDTRwgt'
+    if args.run_freeze_other_sf:
+        ext_fit_options += ',SF_'+flv_poi2+",SF_"+flv_poi3        
 elif args.mode == 'fit_var_rwgt':
     ext_fit_options = '--setParameters fitVarRwgt=1 --freezeParameters fitVarRwgt'
+    if args.run_freeze_other_sf:
+        ext_fit_options += ',SF_'+flv_poi2+",SF_"+flv_poi3        
 
 cmd = '''
 cd {workdir} && \
 echo "+++ Converting datacard to workspace +++" && \
 text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtendedV2:tagAndProbe SF.txt --PO categories={flv_poi1},{flv_poi2},{flv_poi3} {ext_po} && \
 echo "+++ Fitting... +++" && \
-combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 {ext_fit_options} > fit.log && \
+echo "combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 {ext_fit_options}" > fit.log && \
+combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 {ext_fit_options} >> fit.log && \
 combine -M FitDiagnostics -m 125 SF.root --saveShapes --saveWithUncertainties --robustFit=1 {ext_fit_options} > /dev/null 2>&1
 '''.format(workdir=args.workdir, flv_poi1=flv_poi1, flv_poi2=flv_poi2, flv_poi3=flv_poi3, ext_po=ext_po, ext_fit_options=ext_fit_options)
-
+    
 runcmd(cmd)
 
 # In case of failure, enlarge the autoMC threshold and fit again
@@ -173,33 +181,51 @@ while 'WARNING: MultiDimFit failed' in open(os.path.join(args.workdir, 'fit.log'
     runcmd(cmd)
 
 if args.run_impact:
-    runcmd('''
-cd {workdir} && \
-combineTool.py -M Impacts -d SF.root -m 125 --doInitialFit --robustFit=1 {ext_fit_options} > pdf.log 2>&1 && \
-combineTool.py -M Impacts -d SF.root -m 125 --robustFit=1 --doFits {ext_fit_options} >> pdf.log 2>&1 && \
-combineTool.py -M Impacts -d SF.root -m 125 -o impacts.json {ext_fit_options} >> pdf.log 2>&1 && \
-plotImpacts.py -i impacts.json -o impacts >> pdf.log 2>&1
-'''.format(workdir=args.workdir, ext_fit_options=ext_fit_options)
-    )
+    if args.run_freeze_other_sf:
+        runcmd('''
+        cd {workdir} && \
+        echo "combineTool.py -M Impacts -d SF.root -m 125 --doInitialFit --robustFit=1 --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options}" > pdf.log \
+        combineTool.py -M Impacts -d SF.root -m 125 --doInitialFit --robustFit=1 --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} >> pdf.log 2>&1 && \
+        echo "combineTool.py -M Impacts -d SF.root -m 125 --robustFit=1 --doFits --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options}" >> pdf.log && \
+        combineTool.py -M Impacts -d SF.root -m 125 --robustFit=1 --doFits --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} >> pdf.log 2>&1 && \
+        echo "combineTool.py -M Impacts -d SF.root -m 125 --redefineSignalPOIs SF_{flv_poi1} -o impacts.json {ext_fit_options}" >> pdf.log && \
+        combineTool.py -M Impacts -d SF.root -m 125 --redefineSignalPOIs SF_{flv_poi1} -o impacts.json {ext_fit_options} >> pdf.log 2>&1 && \
+        plotImpacts.py -i impacts.json -o impacts >> pdf.log 2>&1
+        '''.format(workdir=args.workdir, flv_poi1=flv_poi1, ext_fit_options=ext_fit_options)
+        )            
+    else:
+        runcmd('''
+        cd {workdir} && \
+        combineTool.py -M Impacts -d SF.root -m 125 --doInitialFit --robustFit=1 {ext_fit_options} > pdf.log 2>&1 && \
+        combineTool.py -M Impacts -d SF.root -m 125 --robustFit=1 --doFits {ext_fit_options} >> pdf.log 2>&1 && \
+        combineTool.py -M Impacts -d SF.root -m 125 -o impacts.json {ext_fit_options} >> pdf.log 2>&1 && \
+        plotImpacts.py -i impacts.json -o impacts >> pdf.log 2>&1
+        '''.format(workdir=args.workdir, ext_fit_options=ext_fit_options)
+        )
 
 if args.run_unce_breakdown:
     runcmd('''
-cd {workdir} && \
-combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} && \
-plot1DScan.py higgsCombineGrid.MultiDimFit.mH125.root --POI SF_{flv_poi1} && \
-combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options} && \
-combine -M MultiDimFit -m 125 --algo=grid --points=50 -n Stat higgsCombineBestfit.MultiDimFit.mH125.root --redefineSignalPOIs SF_{flv_poi1} --snapshotName MultiDimFit --freezeParameters allConstrainedNuisances && \
-plot1DScan.py higgsCombineGrid.MultiDimFit.mH125.root --others 'higgsCombineStat.MultiDimFit.mH125.root:FreezeAll:2' --POI SF_{flv_poi1} -o unce_breakdown --breakdown Syst,Stat
-'''.format(workdir=args.workdir, flv_poi1=flv_poi1, ext_fit_options=ext_fit_options)
+    cd {workdir} && \
+    echo "combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options}" > unc.log && \
+    combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} && \
+    plot1DScan.py higgsCombineGrid.MultiDimFit.mH125.root --POI SF_{flv_poi1} && \
+    echo "combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options}" >> unc.log && \
+    combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options} && \
+    echo "combine -M MultiDimFit -m 125 --algo=grid --points=50 -n Stat higgsCombineBestfit.MultiDimFit.mH125.root --redefineSignalPOIs SF_{flv_poi1} --snapshotName MultiDimFit --freezeParameters allConstrainedNuisances" >> unc.log && \
+    combine -M MultiDimFit -m 125 --algo=grid --points=50 -n Stat higgsCombineBestfit.MultiDimFit.mH125.root --redefineSignalPOIs SF_{flv_poi1} --snapshotName MultiDimFit --freezeParameters allConstrainedNuisances && \
+    plot1DScan.py higgsCombineGrid.MultiDimFit.mH125.root --others 'higgsCombineStat.MultiDimFit.mH125.root:FreezeAll:2' --POI SF_{flv_poi1} -o unce_breakdown --breakdown Syst,Stat
+    '''.format(workdir=args.workdir, flv_poi1=flv_poi1, ext_fit_options=ext_fit_options)
     )
 
 if args.run_full_unce_breakdown:
     assert args.mode == 'main', '--run-full-unce-breakdown only works with --mode=main'
     cmd = '''
-cd {workdir} && \
-combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} > full_unce.log 2>&1 && \
-combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options} >> full_unce.log 2>&1 &&
-'''.format(workdir=args.workdir, flv_poi1=flv_poi1, ext_fit_options=ext_fit_options)
+    cd {workdir} && \
+    echo "combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options}" > full_unce.log && \
+    combine -M MultiDimFit -m 125 SF.root --algo=grid --robustFit=1 --points=50 -n Grid --redefineSignalPOIs SF_{flv_poi1} {ext_fit_options} >> full_unce.log 2>&1 && \
+    echo "combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options}" >> full_unce.log && \
+    combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 -n Bestfit --saveWorkspace {ext_fit_options} >> full_unce.log 2>&1 &&
+    '''.format(workdir=args.workdir, flv_poi1=flv_poi1, ext_fit_options=ext_fit_options)
     comb_plot_opt = []
     syst_list_iter = syst_list[::-1] # make sure no sfBDTRwgt, fitVarRwgt in syst_list in the main routine
     for i in range(len(syst_list_iter)):

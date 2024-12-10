@@ -19,7 +19,7 @@ class TagAndProbeExtendedV2(PhysicsModel):
             if po.startswith("categories="):  # shorthand:  categories=cat1,cat2,cat3
                 physOptions.remove(po)
                 self._categories = po.replace("categories=", "").split(",")
-            self._bound = (0.5, 2.)
+            self._bound = (0., 20.)
             if po.startswith("bound="):
                 physOptions.remove(po)
                 self._bound = list(map(float, po.replace("bound=", "").split(",")))

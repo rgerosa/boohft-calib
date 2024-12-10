@@ -87,6 +87,7 @@ class FitUnit(ProcessingUnit):
             skip_fit=self.global_cfg.skip_fit,
             run_impact_for_central_fit=self.global_cfg.run_impact_for_central_fit,
             run_full_unce_breakdown_for_central_fit=self.global_cfg.run_full_unce_breakdown_for_central_fit,
+            run_freeze_other_sf=self.global_cfg.run_freeze_other_sf,
             use_helvetica=self.global_cfg.use_helvetica,
             color_order=sns.color_palette('cubehelix', 3),
             cat_order=['flvL', 'flvC', 'flvB'] if self.global_cfg.type=='bb' \
@@ -625,13 +626,18 @@ def concurrent_fit_unit(arg):
         # _logger.debug("Run fit point " + workdir)
         if is_central:
             ext_args = ''
+            if args.run_freeze_other_sf:
+                ext_args += '--run-freeze-other-sf '
             if args.run_impact_for_central_fit:
                 ext_args += '--run-impact --run-unce-breakdown '
             if args.run_full_unce_breakdown_for_central_fit and mode == 'main':
                 ext_args += '--run-full-unce-breakdown '
             out, ret = runcmd(f"bash cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode} {ext_args}")
         else:
-            out, ret = runcmd(f"bash cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode}")
+            ext_args = ''
+            if args.run_freeze_other_sf:
+                ext_args += '--run-freeze-other-sf '
+            out, ret = runcmd(f"bash cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode} {ext_args}")
         if ret != 0:
             _logger.error("Error running the fit point: " + workdir + "\n" + \
                 "See the following output (from last few lines):\n\n" + '\n'.join(out.splitlines()[-20:]))

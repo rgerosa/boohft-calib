@@ -5,7 +5,7 @@
 ###############
 
 ## Routine name
-routine_name: PNetXbbVsQCD_ak8_inclWP_2022preEE_NanoV12
+routine_name: PNetXbbVsQCD_ak8_inclWP_2022preEE_NanoV12_frozen
 
 ## Type of the tagger, can be 'bb', 'cc', or 'qq'. This is used in the choice of proxy - e.g. for 'bb' one use
 ## g->bb as the proxy of bb resonance signal and extract the SF from the flavour B component.
@@ -25,6 +25,7 @@ pt_edges: [250, 350, 450, 550, 700]
 ## [Optional]: Step 4 will by default run the impact for the central fit point, which is time-consuming.
 ## For this example we temporarily disable the feature, which does not affect the scale factors. 
 run_impact_for_central_fit: false  # default: true
+run_freeze_other_sf: true
 
 ## custom config!!
 custom_sfbdt_path: /eos/user/c/coli/cms-repo/boohft-calib/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model

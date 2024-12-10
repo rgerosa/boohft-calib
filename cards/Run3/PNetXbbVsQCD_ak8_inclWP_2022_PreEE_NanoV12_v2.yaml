@@ -45,7 +45,7 @@ tagger:
   ## to these WPs. Format: {name: [low, high], ...}
   ## Note: below values are taken only as an example. Please optimize and choose the WPs dedicated to
   ## the user's anlaysis
-  wps: {HP: [0.95, 1.00], MP: [0.90, 0.95], LP: [0.80, 0.90]} # official UL WPs
+  wps: {HP: [0.985, 1.00], MP: [0.95, 0.985], LP: [0.90, 0.95], LLP: [0.80, 0.90]} # official UL WPs
 
   ## Label name of the tagger
   label: ParticleNet-MD bbVsQCD

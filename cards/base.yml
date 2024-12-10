@@ -36,6 +36,7 @@ run_central_fit_only: false  # if true, only run the central sfBDT fit for each 
 skip_fit: false  # if true, skip the fit and directly go to plot making with existing results
 run_impact_for_central_fit: true  # when true, also run impact and uncertainty break down for the central fit, which can be more time costly
 run_full_unce_breakdown_for_central_fit: true  # when true, also run full uncertainty break down for the central fit, and get the unce contribution from each source
+run_freeze_other_sf: false
 
 # 4_fit options part C (for visualizing fit results)
 show_fitvarrwgt_unce: false  # if true, include the fit var reweighting uncertianty in the fit result and put corresponding on web
@@ -110,3 +111,4 @@ default_wp_name_map:
   HP: High Purity
   MP: Medium Purity
   LP: Low Purity
+  LLP: Very Low Purity

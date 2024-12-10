@@ -49,7 +49,7 @@ class CoastlineCoffeaProcessor(processor.ProcessorABC):
         if self.global_cfg.custom_sfbdt_path is not None:
             self.xgb = XGBEnsemble(
                 [self.global_cfg.custom_sfbdt_path + '.%d' % i for i in range(self.global_cfg.custom_sfbdt_kfold)],
-                ['fj_2_tau21', 'fj_2_sj1_rawmass', 'fj_2_sj2_rawmass', 'fj_2_ntracks_sv12', 'fj_2_sj1_sv1_pt', 'fj_2_sj2_sv1_pt'],
+                self.global_cfg.sfbdt_input_exprs,
             )
 
         dataset = hist.Cat("dataset", "dataset")
@@ -104,14 +104,7 @@ class CoastlineCoffeaProcessor(processor.ProcessorABC):
 
             # fill into histograms for each WP (range choices on tagger), MC only, flavour selection applied
             if self.global_cfg.custom_sfbdt_path is not None:
-                sfbdt_inputs = {
-                    'fj_2_tau21': events_fj[f'fj_{i}_tau21'],
-                    'fj_2_sj1_rawmass': events_fj[f'fj_{i}_sj1_rawmass'],
-                    'fj_2_sj2_rawmass': events_fj[f'fj_{i}_sj2_rawmass'],
-                    'fj_2_ntracks_sv12': events_fj[f'fj_{i}_ntracks_sv12'],
-                    'fj_2_sj1_sv1_pt': events_fj[f'fj_{i}_sj1_sv1_pt'],
-                    'fj_2_sj2_sv1_pt': events_fj[f'fj_{i}_sj2_sv1_pt'],
-                }
+                sfbdt_inputs = {v: ak.numexpr.evaluate(v.replace('fj_x', f'fj_{i}'), events_fj) for v in self.global_cfg.sfbdt_input_exprs}
                 sfbdt = ak.Array(self.xgb.eval(sfbdt_inputs))
             else:
                 sfbdt = events_fj[f'fj_{i}_sfBDT']
@@ -119,6 +112,10 @@ class CoastlineCoffeaProcessor(processor.ProcessorABC):
                 #tmin, tmax = self.global_cfg.tagger.span
                 #targger_range_sel = "("+self.tagger_expr.replace('fj_x', f'fj_{i}')+">="+str(tmin)+") & ("+self.tagger_expr.replace('fj_x', f'fj_{i}')+"<="+str(tmax)+")"
                 tagger_flv_sel = ak.numexpr.evaluate(self.tagger_expr.replace('fj_x', f'fj_{i}'), events_fj[flv_sel])
+                # check how many event are beyond the tagger span
+                if (np.sum(tagger_flv_sel < self.global_cfg.tagger.span[0]) + np.sum(tagger_flv_sel > self.global_cfg.tagger.span[1])) / len(tagger_flv_sel) > 0.01:
+                    _logger.warning(f"More than 1% of events are beyond the tagger span {self.global_cfg.tagger.span}. Is it expected?")
+                tagger_flv_sel = np.clip(tagger_flv_sel, *self.global_cfg.tagger.span)
                 xtagger_flv_sel = self.xtagger_map(tagger_flv_sel)
                 out[f'h2d_grid'].fill(
                     dataset=dataset,

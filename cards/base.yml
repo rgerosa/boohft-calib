@@ -102,6 +102,14 @@ tagger_name_replace_map:
   FatJet_particleNet_TvsQCD: fj_x_ParticleNet_TvsQCD
   FatJet_particleNet_WvsQCD: fj_x_ParticleNet_WvsQCD
   FatJet_particleNet_ZvsQCD: fj_x_ParticleNet_ZvsQCD
+  # GloParT
+  FatJet_globalParT3_Xbb: fj_x_GlobalParT3_Xbb
+  FatJet_globalParT3_Xcc: fj_x_GlobalParT3_Xcc
+  FatJet_globalParT3_Xqq: fj_x_GlobalParT3_Xqq
+  FatJet_globalParT3_QCD: fj_x_GlobalParT3_QCD  
+  FatJet_globalParT3_massCorrGeneric: fj_x_GlobalParT3_massCorr
+  FatJet_globalParT3_TopbWqq: fj_x_GlobalParT3_TopbWqq
+  FatJet_globalParT3_TopbWq: fj_x_GlobalParT3_TopbWq
   # DeepAK8 MD/non-MD
   FatJet_deepTagMD_ZHbbvsQCD: fj_x_DeepAK8MD_ZHbbvsQCD
   FatJet_deepTagMD_ZHccvsQCD: fj_x_DeepAK8MD_ZHccvsQCD
@@ -123,3 +131,4 @@ default_wp_name_map:
   MP: Medium Purity
   LP: Low Purity
   LLP: Very Low Purity
+  VLP: Very Low Purity

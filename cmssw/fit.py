@@ -61,7 +61,6 @@ all_procs = sig_procs + bkg_procs
 
 bins = cb.bin_set()
 
-#syst_list = ['lumi_13TeV', 'pu', 'l1PreFiring', 'jes', 'jer', 'fracBB', 'fracCC', 'fracLight', 'psWeightIsr', 'psWeightFsr']
 syst_list = ['lumi_13TeV', 'jes', 'jer', 'fracBB', 'fracCC', 'fracLight', 'psWeightIsr', 'psWeightFsr']
 if args.mode == 'sfbdt_rwgt':
     syst_list += ['sfBDTRwgt']
@@ -147,6 +146,7 @@ if args.bound_main_poi:
     ext_po += '--PO boundMainPOI=' + args.bound_main_poi + ' '
 
 if args.mode == 'main':
+    ext_fit_options = ''
     if args.run_freeze_other_sf:
         ext_fit_options = '--freezeParameters SF_'+flv_poi2+",SF_"+flv_poi3        
 elif args.mode == 'sfbdt_rwgt':

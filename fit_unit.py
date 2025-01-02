@@ -624,24 +624,13 @@ def concurrent_fit_unit(arg):
         # _logger.debug("Run fit point " + workdir)
         ext_args = ''
         if is_central:
-<<<<<<< HEAD
             ext_args = ''
             if args.run_freeze_other_sf:
                 ext_args += '--run-freeze-other-sf '
-=======
->>>>>>> origin/main
             if args.run_impact_for_central_fit:
                 ext_args += '--run-impact --run-unce-breakdown '
             if args.run_full_unce_breakdown_for_central_fit and mode == 'main':
                 ext_args += '--run-full-unce-breakdown '
-<<<<<<< HEAD
-            out, ret = runcmd(f"bash cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode} {ext_args}")
-        else:
-            ext_args = ''
-            if args.run_freeze_other_sf:
-                ext_args += '--run-freeze-other-sf '
-            out, ret = runcmd(f"bash cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode} {ext_args}")
-=======
         if args.set_bounds is not None:
             assert isinstance(args.set_bounds, list) and len(args.set_bounds) == 2
             lower, upper = args.set_bounds
@@ -651,7 +640,6 @@ def concurrent_fit_unit(arg):
             lower, upper = args.set_bounds_main_poi
             ext_args += f'--bound-main-poi={lower},{upper} '
         out, ret = runcmd(f"bash cmssw/wrapper.sh cmssw/launch_fit.sh {inputdir} {workdir} --year={args.year} --type={args.type} --mode={mode} {ext_args}")
->>>>>>> origin/main
         if ret != 0:
             _logger.error("Error running the fit point: " + workdir + "\n" + \
                 "See the following output (from last few lines):\n\n" + '\n'.join(out.splitlines()[-20:]))

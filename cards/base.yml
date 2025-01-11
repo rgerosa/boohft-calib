@@ -59,7 +59,8 @@ lumi_dict: {"2016APV": 19.52, "2016": 16.81, "2017": 41.48, "2018": 59.83, "2022
 fileset_template:
   qcd-mg:  mc/qcd-mg_tree.root
   top:     mc/top_tree.root
-  v-qq:    mc/v-qq_tree.root
+  z-qq:    mc/z-qq_tree.root
+  w-qq:    mc/w-qq_tree.root
   jetht:   data/jetmet_tree.root
 
 # used HLT_PFHT* branches depend on year
@@ -82,8 +83,8 @@ unce_list: [jes, jer, fracBB, fracCC, fracLight, psWeightIsr, psWeightFsr, sfBDT
 # sfBDT input variable expressions ('fj_x' is a placeholder of 'fj_1' and 'fj_2')
 sfbdt_input_exprs:
   - fj_x_tau21
-  - fj_x_sj1_rawmass
-  - fj_x_sj2_rawmass
+  - fj_x_sj1_mass
+  - fj_x_sj2_mass
   - fj_x_ntracks_sv12
   - fj_x_sj1_sv1_pt
   - fj_x_sj2_sv1_pt
@@ -99,31 +100,13 @@ tagger_name_replace_map:
   FatJet_particleNetMD_XccVsQCD: fj_x_ParticleNetMD_XccVsQCD
   FatJet_particleNetMD_XccOrXqqVsQCD: fj_x_ParticleNetMD_XccOrXqqVsQCD
   FatJet_particleNetMD_XccOrXqqVsQCD: fj_x_ParticleNetMD_XccOrXqqVsQCD
-  FatJet_particleNet_TvsQCD: fj_x_ParticleNet_TvsQCD
-  FatJet_particleNet_WvsQCD: fj_x_ParticleNet_WvsQCD
-  FatJet_particleNet_ZvsQCD: fj_x_ParticleNet_ZvsQCD
   # GloParT
   FatJet_globalParT3_Xbb: fj_x_GlobalParT3_Xbb
   FatJet_globalParT3_Xcc: fj_x_GlobalParT3_Xcc
   FatJet_globalParT3_Xqq: fj_x_GlobalParT3_Xqq
   FatJet_globalParT3_QCD: fj_x_GlobalParT3_QCD  
-  FatJet_globalParT3_massCorrGeneric: fj_x_GlobalParT3_massCorr
   FatJet_globalParT3_TopbWqq: fj_x_GlobalParT3_TopbWqq
   FatJet_globalParT3_TopbWq: fj_x_GlobalParT3_TopbWq
-  # DeepAK8 MD/non-MD
-  FatJet_deepTagMD_ZHbbvsQCD: fj_x_DeepAK8MD_ZHbbvsQCD
-  FatJet_deepTagMD_ZHccvsQCD: fj_x_DeepAK8MD_ZHccvsQCD
-  FatJet_deepTagMD_bbVsLight: fj_x_DeepAK8MD_bbVsLight
-  FatJet_deepTag_TvsQCD: fj_x_DeepAK8_TvsQCD
-  FatJet_deepTag_WvsQCD: fj_x_DeepAK8_WvsQCD
-  FatJet_deepTag_ZvsQCD: fj_x_DeepAK8_ZvsQCD
-  # DeepDoubleX (MD)
-  FatJet_btagDDBvLV2: fj_x_btagDDBvLV2
-  FatJet_btagDDCvBV2: fj_x_btagDDCvBV2
-  FatJet_btagDDCvLV2: fj_x_btagDDCvLV2
-  # others
-  FatJet_btagDeepB: fj_x_btagDeepB
-  FatJet_btagHbb: fj_x_btagHbb
 
 # default working point name mapping
 default_wp_name_map:

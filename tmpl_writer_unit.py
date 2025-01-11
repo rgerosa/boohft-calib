@@ -85,6 +85,7 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
             'eta': (r'$\eta(j)$', (50, -2., 2.)),
             'pt': (r'$p_{T}(j)$', (40, 200., 1000.)),
             'mass': (r'$m_{SD}(j)$', (15, 50., 200.)),
+            'mass-reg': (r'$m_{REG}(j)$', (20, 20., 220.)),
         }
 
         hist_fit, hist_incl = {}, {}
@@ -237,7 +238,7 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
                 # fill in inclusive histogram
                 for var, expr in zip(self.incl_var_dict.keys(), [
                     'sfbdt[ptsel]', 'tagger[ptsel]', 'xtagger[ptsel]', 'logmsv[ptsel]', \
-                    f'events_fj.fj_{i}_eta[ptsel]', f'events_fj.fj_{i}_pt[ptsel]', f'events_fj.fj_{i}_sdmass[ptsel]',
+                    f'events_fj.fj_{i}_eta[ptsel]', f'events_fj.fj_{i}_pt[ptsel]', f'events_fj.fj_{i}_sdmass[ptsel]', f'events_fj.fj_{i}_GlobalParT3_mass[ptsel]'
                 ]):
                     out[f'hinc_{var}_pt{ptmin}to{ptmax}'].fill(
                         dataset=dataset,

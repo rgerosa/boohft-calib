@@ -8,7 +8,7 @@ unset PYTHONHOME
 
 # load CMSSW environment
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export RELEASE=CMSSW_11_3_4
+export RELEASE=CMSSW_10_2_27
 if [ -r $RELEASE/src ] ; then
   echo found $RELEASE
 else

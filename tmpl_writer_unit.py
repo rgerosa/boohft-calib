@@ -52,14 +52,7 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
         self.tagger_expr = parse_tagger_expr(global_cfg.tagger_name_replace_map, global_cfg.tagger.expr)
         self.lookup_mc_weight = partial(lookup_pt_based_weight, self.weight_map, self.pt_reweight_edges, jet_var_maxlimit=2500.)
         self.lookup_sfbdt_weight = partial(lookup_pt_based_weight, self.sfbdt_weight_map, self.pt_reweight_edges, jet_var_maxlimit=1.)
-        #self.untypes = ['nominal', 'fracBCLUp', 'fracBCLDown', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', 'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', 'sfBDTRwgtUp']
         self.untypes = ['nominal', 'fracBCLUp', 'fracBCLDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', 'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', 'sfBDTRwgtUp']
-        #self.write_untypes = [
-        #    'nominal', 'puUp', 'puDown', 'l1PreFiringUp', 'l1PreFiringDown', 'jesUp', 'jesDown', 'jerUp', 'jerDown', \
-        #    'fracBBUp', 'fracBBDown', 'fracCCUp', 'fracCCDown', 'fracLightUp', 'fracLightDown', \
-        #    'psWeightIsrUp', 'psWeightIsrDown', 'psWeightFsrUp', 'psWeightFsrDown', \
-        #    'sfBDTRwgtUp', 'sfBDTRwgtDown', 'fitVarRwgtUp', 'fitVarRwgtDown'
-        #]
         self.write_untypes = [
             'nominal', 'jesUp', 'jesDown', 'jerUp', 'jerDown', \
             'fracBBUp', 'fracBBDown', 'fracCCUp', 'fracCCDown', 'fracLightUp', 'fracLightDown', \
@@ -86,6 +79,17 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
             'pt': (r'$p_{T}(j)$', (40, 200., 1000.)),
             'mass': (r'$m_{SD}(j)$', (15, 50., 200.)),
             'mass-reg': (r'$m_{REG}(j)$', (20, 20., 220.)),
+            'tau21': (r'$tau_{21}$',(35,0.,1.)),
+            'tau32': (r'$tau_{32}$',(35,0.,1.)),
+            'sj1_pt': (r'$p_{T}(sj1)$',(40,50.,500.)),
+            'sj2_pt': (r'$p_{T}(sj2)$',(40,50.,500.)),
+            'sj1_rawmass': (r'$m_{raw}(sj1)$',(30,0.,100.)),
+            'sj2_rawmass': (r'$m_{raw}(sj2)$',(30,0.,100.)),
+            'ntracks_sv12': (r'$N_{tracks}(SV12)$',(10,0.,20.)),
+            'sj1_sv1_pt': (r'$p_{T}(j1,SV1)$',(40,0.,400.)),
+            'sj2_sv1_pt': (r'$p_{T}(j2,SV1)$',(40,0.,400.)),
+            'sj1_sv1_dxy': (r'$d_{xy}(j1,SV1)$',(100,0.,1.)),
+            'sj2_sv1_dxy': (r'$d_{xy}(j2,SV1)$',(100,0.,1.)),
         }
 
         hist_fit, hist_incl = {}, {}
@@ -237,9 +241,14 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
 
                 # fill in inclusive histogram
                 for var, expr in zip(self.incl_var_dict.keys(), [
-                    'sfbdt[ptsel]', 'tagger[ptsel]', 'xtagger[ptsel]', 'logmsv[ptsel]', \
-                    f'events_fj.fj_{i}_eta[ptsel]', f'events_fj.fj_{i}_pt[ptsel]', f'events_fj.fj_{i}_sdmass[ptsel]', f'events_fj.fj_{i}_GlobalParT3_mass[ptsel]'
+                        'sfbdt[ptsel]', 'tagger[ptsel]', 'xtagger[ptsel]', 'logmsv[ptsel]', \
+                        f'events_fj.fj_{i}_eta[ptsel]', f'events_fj.fj_{i}_pt[ptsel]', f'events_fj.fj_{i}_sdmass[ptsel]', f'events_fj.fj_{i}_GlobalParT3_mass[ptsel]',
+                        f'events_fj.fj_{i}_tau21[ptsel]', f'events_fj.fj_{i}_tau32[ptsel]', f'events_fj.fj_{i}_sj1_pt[ptsel]', f'events_fj.fj_{i}_sj2_pt[ptsel]',
+                        f'events_fj.fj_{i}_sj1_rawmass[ptsel]', f'events_fj.fj_{i}_sj2_rawmass[ptsel]', f'events_fj.fj_{i}_ntracks_sv12[ptsel]',
+                        f'events_fj.fj_{i}_sj1_sv1_pt[ptsel]', f'events_fj.fj_{i}_sj2_sv1_pt[ptsel]', f'events_fj.fj_{i}_sj1_sv1_dxy[ptsel]', f'events_fj.fj_{i}_sj2_sv1_dxy[ptsel]'
                 ]):
+
+                    
                     out[f'hinc_{var}_pt{ptmin}to{ptmax}'].fill(
                         dataset=dataset,
                         flv=isB[ptsel] * 1 + isC[ptsel] * 2,
@@ -323,7 +332,11 @@ class TmplWriterUnit(ProcessingUnit):
             _logger.info("[Postprocess]: Writing the template for fit.")
             p = self.processor_instance
             writer_handler = StandaloneMultiThreadedUnit(workers=self.workers, use_unordered_mapping=True)
-            args = SimpleNamespace(write_untypes=p.write_untypes, outputdir=self.outputdir)
+
+            try:            
+                args = SimpleNamespace(write_untypes=p.write_untypes, outputdir=self.outputdir, normalize=bool(self.global_cfg.normalize_templates))
+            except:
+                args = SimpleNamespace(write_untypes=p.write_untypes, outputdir=self.outputdir, normalize=False)
 
             for wp in p.wps: # WP loop
                 for ipt, (ptmin, ptmax) in enumerate(zip(p.pt_edges[:-1], p.pt_edges[1:])): # pt loop
@@ -427,19 +440,13 @@ def concurrent_tmpl_writing_unit(arg):
             with uproot3.recreate(filepath) as fw:
                 for w_untype in args.write_untypes: # uncertainty type
 
-                    # if not w_untype.startswith('sfBDTRwgt'):
-                    #     tot_fac = 1.
-                    # else:
-                    #     # before slicing hists and storing to pass/fail root file, calculate the scale factors to reweight all MC to data
-                    #     h_incl_mc = get_unit_template(bhs, wp, (ptmin, ptmax), ibdt, w_untype, None, None, is_mc=True, is_incl=True)
-                    #     h_incl_data = get_unit_template(bhs, wp, (ptmin, ptmax), ibdt, w_untype, None, None, is_mc=False, is_incl=True)
-                    #     # total factor will be used to fill every MC hist; bin-wise factors used in the fitRwgtVar unce type 
-                    #     tot_fac = sum(h_incl_data.values(flow=True)) / sum(h_incl_mc.values(flow=True))
-                    #     # print(tot_fac)
+                    if args.normalize:                        
+                        #before slicing hists and storing to pass/fail root file, calculate the scale factors to reweight all MC to data
+                        h_incl_mc = get_unit_template(bhs, wp, (ptmin, ptmax), ibdt, w_untype, None, None, is_mc=True, is_incl=True)
+                        h_incl_data = get_unit_template(bhs, wp, (ptmin, ptmax), ibdt, w_untype, None, None, is_mc=False, is_incl=True)
+                        # total factor will be used to fill every MC hist; bin-wise factors used in the fitRwgtVar unce type 
+                        tot_fac = sum(h_incl_data.values(flow=True)) / sum(h_incl_mc.values(flow=True))
 
-                    # We do no normalize the inclusive (pass+fail) templates before fit!
-                    tot_fac = 1.
-                    
                     if ibdt == jbdt:
                         for iflv, flv in zip(range(3), ['flvL', 'flvB', 'flvC']): # multiple hists in a root file
                             cat = flv if w_untype == 'nominal' else (flv + '_' + w_untype)
@@ -582,7 +589,6 @@ def get_unit_template(bhs, wp, pt_lim, ibdt, w_untype, ipasswp, iflv, is_mc=True
             assert 'factor' in additional_options
             h_out = scale_bh(h_out, additional_options['factor'])
             return h_out
-
 
     elif w_untype == 'fitVarRwgtUp':
         if is_incl:

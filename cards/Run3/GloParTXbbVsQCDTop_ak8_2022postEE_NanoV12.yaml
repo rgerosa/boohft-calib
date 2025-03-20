@@ -12,7 +12,7 @@ routine_name: GloParTXbbVsQCDTop_ak8
 type: bb
 
 ## Year of the UL condition. Can be 2016APV, 2016, 2017, 2018, 2022, 2022preEE, 2022postEE, 2023preBPIX, 2023postBPIX
-year: 2022preEE
+year: 2022postEE
 
 ## Prefix of the main samples produced from NanoHRT. $YEAR is a placeholder of year in the format above
 ## This need not be changed except for expert use.

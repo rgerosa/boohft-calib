@@ -5,14 +5,14 @@
 ###############
 
 ## Routine name
-routine_name: GloParTXbbVsQCDTop_ak8
+routine_name: GloParTXbbVsQCD_ak8_TaPv3
 
 ## Type of the tagger, can be 'bb', 'cc', or 'qq'. This is used in the choice of proxy - e.g. for 'bb' one use
 ## g->bb as the proxy of bb resonance signal and extract the SF from the flavour B component.
 type: bb
 
 ## Year of the UL condition. Can be 2016APV, 2016, 2017, 2018, 2022, 2022preEE, 2022postEE, 2023preBPIX, 2023postBPIX
-year: 2022preEE
+year: 2023preBPIX
 
 ## Prefix of the main samples produced from NanoHRT. $YEAR is a placeholder of year in the format above
 ## This need not be changed except for expert use.
@@ -25,12 +25,13 @@ pt_edges: [250, 350, 450, 550, 700]
 ## [Optional]: Step 4 will by default run the impact for the central fit point, which is time-consuming.
 ## For this example we temporarily disable the feature, which does not affect the scale factors. 
 run_impact_for_central_fit: true  # default: true
+normalize_templates: true ## normalize templates for T&P fit
 
 ## custom config!!
 custom_sfbdt_path: /gwdata/users/gerosa/BoostedHbbCalibration/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model
 
 custom_sfbdt_kfold: 5
-custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_GlobalParT3_Xbb>=0) & (fj_x_GlobalParT3_QCD>=0) & (fj_x_GlobalParT3_TopbWqq>=0) & (fj_x_GlobalParT3_TopbWq>=0) & (passmetfilters>0) & (passjetvetomap>0)
+custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_GlobalParT3_Xbb>=0) & (fj_x_GlobalParT3_QCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
 
 #######################
 ## Tagger defination ##
@@ -46,10 +47,10 @@ tagger:
   ## to these WPs. Format: {name: [low, high], ...}
   ## Note: below values are taken only as an example. Please optimize and choose the WPs dedicated to
   ## the user's anlaysis
-  wps: {HP: [0.96, 1.00], MP: [0.90,0.96], LP: [0.78, 0.90], VLP: [0.50,0.78]} # official UL WPs
+  wps: {HP: [0.975, 1.00], MP: [0.93,0.975], LP: [0.85, 0.93], VLP: [0.70,0.85]} # official UL WPs
 
   ## Label name of the tagger
-  label: GloParT bbVsQCDTop
+  label: GloParT bbVsQCD
 
 ########################
 ## Main analysis tree ##
@@ -66,10 +67,10 @@ main_analysis_tree:
   ## correct g->bb/cc/qq jet phase-space (for bb/cc/qq-type calibration respectively) that serves as a
   ## reasonable proxy to the resonance signal jets under this user-specified selection
   ## *NOTE*: should always use parentheses between & and |
-  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_GlobalParT3_Xbb>=0) & (fj_1_GlobalParT3_QCD>=0) & (fj_1_GlobalParT3_TopbWqq>=0) & (fj_1_GlobalParT3_TopbWq>=0) & (passmetfilters>0) & (passjetvetomap>0)
+  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_GlobalParT3_Xbb>=0) & (fj_1_GlobalParT3_QCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
   
   ## Name or expression of the same tagger variable defined in this tree
-  tagger: fj_1_GlobalParT3_Xbb/(fj_1_GlobalParT3_Xbb+fj_1_GlobalParT3_TopbWqq+fj_1_GlobalParT3_TopbWq+fj_1_GlobalParT3_QCD)
+  tagger: fj_1_GlobalParT3_Xbb/(fj_1_GlobalParT3_Xbb+fj_1_GlobalParT3_QCD)
 
   ## Event weight expression used in the user's analysis
   weight: genWeight*xsecWeight*puWeight

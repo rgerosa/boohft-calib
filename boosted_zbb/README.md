@@ -1,1 +1,0 @@
-Package to be used in a CMSSW release with latest version of combine for 14X

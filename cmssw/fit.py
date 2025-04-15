@@ -161,7 +161,7 @@ elif args.mode == 'fit_var_rwgt':
 cmd = '''
 cd {workdir} && \
 echo "+++ Converting datacard to workspace +++" && \
-text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtendedV3:tagAndProbe SF.txt --PO categories={flv_poi1},{flv_poi2},{flv_poi3} {ext_po} && \
+text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtendedV2:tagAndProbe SF.txt --PO categories={flv_poi1},{flv_poi2},{flv_poi3} {ext_po} && \
 echo "+++ Fitting... +++" && \
 echo "combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 {ext_fit_options}" > fit.log && \
 combine -M MultiDimFit -m 125 SF.root --algo=singles --robustFit=1 {ext_fit_options} >> fit.log && \

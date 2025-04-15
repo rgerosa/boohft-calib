@@ -16,7 +16,7 @@ year: 2022preEE
 
 ## Prefix of the main samples produced from NanoHRT. $YEAR is a placeholder of year in the format above
 ## This need not be changed except for expert use.
-sample_prefix: /media/Disk1/rgerosa/CalibrationHbb/ntuples_300524_ak8_qcd_$YEAR
+sample_prefix: /gwdata/users/gerosa/BoostedHbbCalibration/ntuples_171224_ak8_qcd_$YEAR/
 
 ## Jet pT edges to define multiple exclusive ranges for fit
 ## e.g. for edges [e1, e2, e3], will define three pT range [e1, e2), [e2, e3), [e3, +inf)
@@ -24,12 +24,12 @@ pt_edges: [250, 350, 450, 550, 700]
 
 ## [Optional]: Step 4 will by default run the impact for the central fit point, which is time-consuming.
 ## For this example we temporarily disable the feature, which does not affect the scale factors. 
-run_impact_for_central_fit: false  # default: true
+run_impact_for_central_fit: true  # default: true
 
 ## custom config!!
-custom_sfbdt_path: /eos/user/c/coli/cms-repo/boohft-calib/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model
+custom_sfbdt_path: /gwdata/users/gerosa/BoostedHbbCalibration/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model
 custom_sfbdt_kfold: 5
-custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_ParticleNetMD_XbbVsQCD>=0)
+custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
 
 #######################
 ## Tagger defination ##
@@ -45,7 +45,7 @@ tagger:
   ## to these WPs. Format: {name: [low, high], ...}
   ## Note: below values are taken only as an example. Please optimize and choose the WPs dedicated to
   ## the user's anlaysis
-  wps: {HP: [0.95, 1.00], MP: [0.90, 0.95], LP: [0.80, 0.90]} # official UL WPs
+  wps: {HP: [0.985, 1.00], MP: [0.95, 0.985], LP: [0.90, 0.95], LLP: [0.80, 0.90]} # official UL WPs
 
   ## Label name of the tagger
   label: ParticleNet-MD bbVsQCD
@@ -58,14 +58,14 @@ tagger:
 main_analysis_tree:
   ## path: ROOT file path of the user's signal sample. $YEAR is a placeholder of year in the format above
   ## treename: the name of the tree to read in the file
-  path: /media/Disk1/rgerosa/CalibrationHbb/ntuples_300524_ak8_higgs_$YEAR/mc/gghbb_tree.root
+  path: /gwdata/users/gerosa/BoostedHbbCalibration/ntuples_171224_ak8_higgs_$YEAR/mc/gghbb_tree.root
   treename: Events
 
   ## The selection used for this sample applied in the user's analysis. This will ensure us to find the
   ## correct g->bb/cc/qq jet phase-space (for bb/cc/qq-type calibration respectively) that serves as a
   ## reasonable proxy to the resonance signal jets under this user-specified selection
   ## *NOTE*: should always use parentheses between & and |
-  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_ParticleNetMD_XbbVsQCD>=0)
+  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
   
   ## Name or expression of the same tagger variable defined in this tree
   tagger: fj_1_ParticleNetMD_XbbVsQCD

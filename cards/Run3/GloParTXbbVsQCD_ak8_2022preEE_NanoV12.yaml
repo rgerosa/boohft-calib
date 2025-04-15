@@ -38,7 +38,7 @@ custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_G
 tagger:
   ## The variable name or expression of the tagger. Name convention same to that stored under NanoAODv9.
   ## example expression: FatJet_particleNetMD_Xbb / (FatJet_particleNetMD_Xbb + FatJet_particleNetMD_QCD)
-  expr: FatJet_globalParT3_Xbb/(FatJet_globalParT3_Xbb+FatJet_globalParT3_TopbWqq+FatJet_globalParT3_TopbWq+FatJet_globalParT3_QCD)
+  expr: FatJet_globalParT3_Xbb/(FatJet_globalParT3_Xbb+FatJet_globalParT3_QCD)
   ## Span of the tagger range
   span: [0., 1.]
 

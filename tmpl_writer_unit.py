@@ -446,7 +446,9 @@ def concurrent_tmpl_writing_unit(arg):
                         h_incl_data = get_unit_template(bhs, wp, (ptmin, ptmax), ibdt, w_untype, None, None, is_mc=False, is_incl=True)
                         # total factor will be used to fill every MC hist; bin-wise factors used in the fitRwgtVar unce type 
                         tot_fac = sum(h_incl_data.values(flow=True)) / sum(h_incl_mc.values(flow=True))
-
+                    else:
+                        tot_fac = 1.
+                        
                     if ibdt == jbdt:
                         for iflv, flv in zip(range(3), ['flvL', 'flvB', 'flvC']): # multiple hists in a root file
                             cat = flv if w_untype == 'nominal' else (flv + '_' + w_untype)

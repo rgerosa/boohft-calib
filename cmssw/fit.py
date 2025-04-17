@@ -17,7 +17,7 @@ parser.add_argument('inputdir', help='Input directory')
 parser.add_argument('workdir', help='Working directory for the fit')
 parser.add_argument('--type', default=None, choices=['bb', 'cc', 'qq'], help='bb, cc, or qq calibration type')
 parser.add_argument('--mode', default=None, choices=['main', 'sfbdt_rwgt', 'fit_var_rwgt'], help='fit schemes in controlling the nuiences.')
-parser.add_argument('--year', default=None, choices=['2016APV', '2016', '2017', '2018','2022preEE','2022postEE','2023preBPIX','2023postBPIX'], help='year condition of the fit')
+parser.add_argument('--year', default=None, choices=['2016APV', '2016', '2017', '2018','2022preEE','2022postEE','2023preBPIX','2023postBPIX','2022','2023'], help='year condition of the fit')
 parser.add_argument('--ext-unce', default=None, help='Extra uncertainty term to run or term to be excluded. e.g. --ext-unce NewTerm1,NewTerm2,~ExcludeTerm1')
 parser.add_argument('--bound', default=None, help='Set the bound of three SFs. In TagAndProbeExtendedV2, the default value --bound 0.5,2 is taken')
 parser.add_argument('--bound-main-poi', default=None, help='Additionally set the bound of the main POI SF. In TagAndProbeExtendedV2, it is not set and the same --bound value is used')
@@ -90,7 +90,7 @@ if args.ext_unce is not None:
 for syst in shapeSysts:
     cb.cp().process(shapeSysts[syst]).AddSyst(cb, syst, 'shape', ch.SystMap()(1.0))
 
-cb.cp().AddSyst(cb, 'lumi_13TeV', 'lnN', ch.SystMap()({'2016APV': 1.012, '2016': 1.012, '2017': 1.023, '2018': 1.025, '2022preEE': 1.025, '2022postEE': 1.025, '2023preBPIX': 1.025, '2023postBPIX': 1.025}[args.year]))
+cb.cp().AddSyst(cb, 'lumi_13TeV', 'lnN', ch.SystMap()({'2016APV': 1.012, '2016': 1.012, '2017': 1.023, '2018': 1.025, '2022preEE': 1.025, '2022postEE': 1.025, '2023preBPIX': 1.025, '2023postBPIX': 1.025, '2022': 1.025, '2023': 1.025}[args.year]))
 
 for bin in bins:
     cb.cp().bin([bin]).ExtractShapes(

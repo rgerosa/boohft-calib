@@ -5,7 +5,7 @@
 ###############
 
 ## Routine name
-routine_name: PNetXbbVsQCD_ak8_inclWP_2023_NanoV12
+routine_name: PNetXbbVsQCD_ak8
 
 ## Type of the tagger, can be 'bb', 'cc', or 'qq'. This is used in the choice of proxy - e.g. for 'bb' one use
 ## g->bb as the proxy of bb resonance signal and extract the SF from the flavour B component.
@@ -20,7 +20,7 @@ sample_prefix: /gwdata/users/gerosa/BoostedHbbCalibration/ntuples_171224_ak8_qcd
 
 ## Jet pT edges to define multiple exclusive ranges for fit
 ## e.g. for edges [e1, e2, e3], will define three pT range [e1, e2), [e2, e3), [e3, +inf)
-pt_edges: [450, 550]
+pt_edges: [250, 450]
 
 ## [Optional]: Step 4 will by default run the impact for the central fit point, which is time-consuming.
 ## For this example we temporarily disable the feature, which does not affect the scale factors. 
@@ -29,9 +29,7 @@ run_impact_for_central_fit: true  # default: true
 ## custom config!!
 custom_sfbdt_path: /gwdata/users/gerosa/BoostedHbbCalibration/sfbdt_models/20221106/tau31_10_10_fj1_model/std/xgb_train.model
 custom_sfbdt_kfold: 5
-custom_selection: (fj_x_pt>450) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0) & (ht>1000)
-
-rwgt_pt_bins: [[450, 500], [500, 550], [550, 600], [600, 700], [700, 800], [800, 100000]]
+custom_selection: (fj_x_pt>250) & (fj_x_sdmass>50) & (fj_x_sdmass<200) & (fj_x_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
 
 fileset_template:
   qcd-mg: mc/qcd-mg_tree.root
@@ -54,7 +52,7 @@ tagger:
   ## to these WPs. Format: {name: [low, high], ...}
   ## Note: below values are taken only as an example. Please optimize and choose the WPs dedicated to
   ## the user's anlaysis
-  wps: {HP: [0.985, 1.00], MP: [0.95, 0.985], LP: [0.90, 0.95]} # official UL WPs
+  wps: {VHP: [0.99, 1.00], HP: [0.975,0.99], MP: [0.95, 0.975], LP: [0.90,0.95]} 
 
   ## Label name of the tagger
   label: ParticleNet-MD bbVsQCD
@@ -74,7 +72,7 @@ main_analysis_tree:
   ## correct g->bb/cc/qq jet phase-space (for bb/cc/qq-type calibration respectively) that serves as a
   ## reasonable proxy to the resonance signal jets under this user-specified selection
   ## *NOTE*: should always use parentheses between & and |
-  selection: (fj_1_pt>450) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0) & (ht>1000)
+  selection: (fj_1_pt>250) & (fj_1_dr_H<0.8) & (fj_1_dr_H_daus<0.8) & (fj_1_sdmass>50) & (fj_1_sdmass<200) & (fj_1_ParticleNetMD_XbbVsQCD>=0) & (passmetfilters>0) & (passjetvetomap>0)
   
   ## Name or expression of the same tagger variable defined in this tree
   tagger: fj_1_ParticleNetMD_XbbVsQCD

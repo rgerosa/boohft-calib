@@ -173,6 +173,9 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
                 #weight['puDown'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeightDown*l1PreFiringWeight*{lumi}', events_fj) * mc_weight
                 weight['l1PreFiringUp'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeight*l1PreFiringWeightUp*{lumi}', events_fj) * mc_weight
                 weight['l1PreFiringDown'] = ak.numexpr.evaluate(f'genWeight*xsecWeight*puWeight*l1PreFiringWeightDown*{lumi}', events_fj) * mc_weight
+                weight['sfBDTRwgtUp'] = weight['nominal'] * sfbdt_weight
+                    
+                # apply PSWeight only at the final stage, while still using the nominal MC reweighting map
                 if len(events_fj) and hasattr(events_fj, 'PSWeight') and len(events_fj.PSWeight[0]) == 4:
                     # apply PSWeight only at the final stage, while still using the nominal MC reweighting map
                     weight['psWeightIsrUp'] = weight['nominal'] * events_fj.PSWeight[:,2]
@@ -181,8 +184,7 @@ class TmplWriterCoffeaProcessor(processor.ProcessorABC):
                     weight['psWeightFsrDown'] = weight['nominal'] * events_fj.PSWeight[:,1]
                 else:
                     weight['psWeightIsrUp'] = weight['psWeightIsrDown'] = weight['psWeightFsrUp'] = weight['psWeightFsrDown'] = weight['nominal']
-                weight['sfBDTRwgtUp'] = weight['nominal'] * sfbdt_weight
-
+                    
             else: # fill weight=1 to data
                 ones = ak.ones_like(events_fj.ht)
                 for untype in self.untypes:
